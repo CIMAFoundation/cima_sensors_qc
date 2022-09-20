@@ -7,7 +7,7 @@ In order to use these data for the implementation of RISICO model, the following
 - wind speed [m/s]
 - wind direction [deg]
 - precipitation [mm/DT] (DT: time step of data acquisition)
-The time step of data acqusition for the RISICO LIVE network is 10 minutes.
+The time step of data acqusition for the RISICO LIVE network is **10 minutes**.
 
 ### Quality tests
 Data from stations are checked every 1 hour. The quality check algorithm is composed by a list of consecutive tests, in which the use of the following test depends on the result from the previous test.
@@ -26,6 +26,8 @@ Then, weather stations are categorized in 4 classes (referred to as QC_label):
     2. wrong: weather station with QC=2
     3. suspicious: weather station with QC=3 o QC=4
     4. good: weather station with QC=5
+
+The algorithm works with pandas.DataFrame objects.
 
 ### References
 1. Guidelines on validation procedures for meteorological data from automatic weather stations, Estévez J., Gavilán P., Giráldez J. V. (2011)
