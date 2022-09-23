@@ -1,5 +1,3 @@
-import pandas as pd
-import risicolive_QC as qc
 
 def main():
     return
