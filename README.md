@@ -19,6 +19,7 @@ Then, rows are categorized in 4 classes (referred to as QC_label):
     4. good: with QC=5
 
 See the **example_notebook.ipynb** for examples.
+
 ---
 ## Quality check of weather stations for RISICO LIVE network
 DEFAULT configuration is setted for the quality check of data from weather stations used for the RISICO LIVE network.
