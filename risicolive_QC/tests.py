@@ -97,14 +97,14 @@ class InternalCheck():
 
         Keyword arguments:
         df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
-        variations -- dictionary with minimum variations accepted for each variable
+        variations -- dictionary with minimum variations accepted for each variable, for a certain range [structure: [min_var, min, max]]
         """
         df_flagged = df_station.copy()
         flags = dict()
         for kk in variations.keys():
             df_flagged.loc[:, 'diff_backward_{}'.format(kk)] = np.abs(df_flagged.loc[:, kk].diff(periods=1))
-            df_flagged.loc[:, 'CHECK_PERSISTENCE_{}'.format(kk)] = df_flagged.apply(lambda row: np.where(row['diff_backward_{}'.format(kk)]<variations[kk], True, False), axis=1)
-            flags['FLAG_PERSISTENCE_{}'.format(kk)] = [df_flagged['CHECK_PERSISTENCE_{}'.format(kk)].all().item()]
+            df_flagged.loc[:, 'CHECK_PERSISTENCE_{}'.format(kk)] = df_flagged.apply(lambda row: np.where((row['diff_backward_{}'.format(kk)]<variations[kk][0]) & (row[kk]>=variations[kk][1]) & (row[kk]<=variations[kk][2]) , True, False), axis=1)
+            flags['FLAG_PERSISTENCE_{}'.format(kk)] = [df_flagged['CHECK_PERSISTENCE_{}'.format(kk)].iloc[1:].all().item()]
         result = not pd.DataFrame(flags).any(axis='columns').item()
         return result
 
