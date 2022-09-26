@@ -3,22 +3,23 @@
 		"DT": "10min",
 		"KEY_STATION": "station_id",
 		"VARS": {
-			"t":  { "info":"temperature",    
+			"t":  { "info":"temperature",
 				"um": "C"},
-			"h":  { "info":"humidity",       
+			"h":  { "info":"humidity",
 			        "um": "."},
-			"p":  { "info":"precipitation",  
+			"p":  { "info":"precipitation",
 				"um": "mm/dt"},
-			"ws": {	"info":"wind speed",     
+			"ws": {	"info":"wind speed",
 				"um": "m/s"},
 			"wd": { "info":"wind direction",
 				"um": "deg"}
 		}
 	},
 	"TEST": {
+				"WINDOW":3,
     		"VARS_CHECK": ["t", "h", "p", "ws", "wd"],
     		"VARS_CONS": ["ws", "wd"],
-    		"RANGES": { 
+    		"RANGES": {
         		"t":  [-30, 50],
         		"h":  [0, 100],
         		"p":  [0, 400],
@@ -37,4 +38,3 @@
     		}
     	}
 }
-
