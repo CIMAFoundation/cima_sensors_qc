@@ -38,7 +38,7 @@ def complete_config(config=None):
     return config
 
 ################################################################################
-def allTests(df_station: pd.DataFrame, window: int=2, config=None):
+def allTests(df_station: pd.DataFrame, window: int=DEFAULT['TEST']['WINDOW'], config=None):
     """
     This function compute all the tests sequentially for the single station
 
@@ -69,7 +69,7 @@ def allTests(df_station: pd.DataFrame, window: int=2, config=None):
     return df_station_check
 
 ################################################################################
-def check_stations(df_stations: pd.DataFrame, window: int=2, key_station: str=None, config=None):
+def check_stations(df_stations: pd.DataFrame, window: int=DEFAULT['TEST']['WINDOW'], key_station: str=None, config=None):
     """
     This function compute the tests check for each station
 
