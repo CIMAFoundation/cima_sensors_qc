@@ -13,7 +13,8 @@ dependencies:
   - _libgcc_mutex=0.1=conda_forge
   - _openmp_mutex=4.5=2_gnu
   - bzip2=1.0.8=h7b6447c_0
-  - ca-certificates=2022.9.14=ha878542_0
+  - ca-certificates=2022.9.24=ha878542_0
+  - dataclasses=0.8=pyh6d0b6a4_7
   - ld_impl_linux-64=2.38=h1181459_1
   - libblas=3.9.0=16_linux64_openblas
   - libcblas=3.9.0=16_linux64_openblas
