@@ -23,22 +23,22 @@ def quality(qc):
     elif (qc==5):
         label = 'good'
     else:
-        label = 'none'
+        label = None
     return label
 
 ################################################################################
-def complete_config(config=None):
+def complete_settings(settings=None):
     """This function complete the config file"""
-    if config is None:
-        config = DEFAULT['TEST']
+    if settings is None:
+        settings = DEFAULT
     else:
         for kk in ['WINDOW', 'VARS_CHECK', 'VARS_CONS', 'RANGES', 'STEPS', 'VARIATIONS']:
-            if not (kk in config.keys()):
-                config[kk] = DEFAULT['TEST'][kk]
-    return config
+            if not (kk in settings.keys()):
+                settings[kk] = DEFAULT[kk]
+    return settings
 
 ################################################################################
-def all_tests(df_station: pd.DataFrame, config=None):
+def all_tests(df_station: pd.DataFrame, settings=DEFAULT):
     """
     This function compute all the tests sequentially for the single station
     complete/consistency/range tests -> computed at each time separately
@@ -47,25 +47,25 @@ def all_tests(df_station: pd.DataFrame, config=None):
 
     Keyword arguments:
     df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
-    config     -- dictionary with config info for all tests
+    settings   -- dictionary with config info for all tests
     """
-    if config is None:
-        return 'ERROR'
+    settings = complete_settings(settings)
+    check = InternalCheck(settings)
 
-    window = config['WINDOW']
+    window = check.settings['WINDOW']
     WW = window-1
     df_station_check = df_station.copy()
     df_station_check.loc[:, 'QC'] = None
     for idx in range(WW, len(df_station)):
-        if not complete_test(df_station.iloc[idx:idx+1], config['VARS_CHECK']):
+        if not check.complete_test(df_station.iloc[idx:idx+1]):
             df_station_check.iloc[(idx, -1)] = 0
-        elif not consistency_test(df_station.iloc[idx:idx+1], config['VARS_CONS']):
+        elif not check.consistency_test(df_station.iloc[idx:idx+1]):
             df_station_check.iloc[(idx, -1)] = 1
-        elif not range_test(df_station.iloc[idx:idx+1], config['RANGES']):
+        elif not check.range_test(df_station.iloc[idx:idx+1]):
             df_station_check.iloc[(idx, -1)] = 2
-        elif not step_test(df_station.iloc[idx-1:idx+1], config['STEPS']):
+        elif not check.step_test(df_station.iloc[idx-1:idx+1]):
             df_station_check.iloc[(idx, -1)] = 3
-        elif not time_persistence_test(df_station.iloc[idx-WW:idx+1], config['VARIATIONS']):
+        elif not check.time_persistence_test(df_station.iloc[idx-WW:idx+1]):
             df_station_check.iloc[(idx, -1)] = 4
         else:
             df_station_check.iloc[(idx, -1)] = 5
