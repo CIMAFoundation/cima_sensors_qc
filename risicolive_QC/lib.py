@@ -38,7 +38,7 @@ def complete_config(config=None):
     return config
 
 ################################################################################
-def allTests(df_station: pd.DataFrame, config=None):
+def all_tests(df_station: pd.DataFrame, config=None):
     """
     This function compute all the tests sequentially for the single station
     complete/consistency/range tests -> computed at each time separately
