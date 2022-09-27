@@ -1,9 +1,9 @@
 # **QUALITY CHECK OF DATA FROM WEATHER STATIONS**
 This package compute the quality check of data.
 The quality check algorithm is composed by a list of consecutive tests, in which the use of the following test depends on the result from the previous test.
-Quality tests considered are **self-based**, that is quality tests are computed internally for each weather station.
+Quality tests considered are **self-based**, that is quality tests are computed internally for the weather station.
 
-The algorithm works with pandas.DataFrame objects, in which each **row** corresponds to a different **time** while data from different **variables** are placed in **columns**. Tests are computed for each row.
+The algorithm works with pandas.DataFrame objects, in which each **row** corresponds to a different **time** while data from different **variables** are placed in **columns**. Tests are computed for each row in a sliding window.
 The quality tests considered are the following:
 - **complete_test**: this test checks if all variables needed are present in each row. If test fails, the row is flagged QC=0. If the test is passed, the following test is computed;
 - **internal_consistency_test**: this test checks data consistency, e.g. if two variables are both zero or non-zero. If the test fails, the row is flagged QC=1. If the test is passed, the following test is computed;
@@ -30,7 +30,7 @@ In order to use these data for the implementation of RISICO model, the following
 - wind speed [m/s]
 - wind direction [deg]
 - precipitation [mm/DT] (DT: time step of data acquisition)
-The time step of data acqusition for the RISICO LIVE network is **10 minutes**. All information needed for each test is contained in the **config.json** file.
+The time step of data acqusition for the RISICO LIVE network is **10 minutes**.
 
 ### References
 1. Guidelines on validation procedures for meteorological data from automatic weather stations, Estévez J., Gavilán P., Giráldez J. V. (2011)

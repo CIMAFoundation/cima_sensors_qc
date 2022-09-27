@@ -21,6 +21,7 @@ setuptools.setup(
     install_requires=[
         'numpy',
         'pandas',
-        'typing'
+        'typing',
+        'dataclasses'
       ],
 )
