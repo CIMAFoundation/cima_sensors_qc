@@ -3,7 +3,7 @@ from .tests import *
 from .settings import *
 
 ################################################################################
-def quality(qc):
+def quality_label(qc):
     """
     This function assigns the quality label:
     - incomplete (QC=0/QC=1): complete or consistency tests not passed
@@ -38,7 +38,7 @@ def complete_settings(settings=None):
     return settings
 
 ################################################################################
-def all_tests(df_station: pd.DataFrame, settings=DEFAULT):
+def quality_test(df_station: pd.DataFrame, settings: Dict=DEFAULT):
     """
     This function compute all the tests sequentially for the single station
     complete/consistency/range tests -> computed at each time separately
@@ -69,22 +69,5 @@ def all_tests(df_station: pd.DataFrame, settings=DEFAULT):
             df_station_check.iloc[(idx, -1)] = 4
         else:
             df_station_check.iloc[(idx, -1)] = 5
-    df_station_check.loc[:, 'QC_label'] = df_station_check['QC'].apply(lambda qc: quality(qc))
+    df_station_check.loc[:, 'QC_label'] = df_station_check['QC'].apply(lambda qc: quality_label(qc))
     return df_station_check
-
-################################################################################
-def check_stations(df_stations: pd.DataFrame, key_station: str=None, config=None):
-    """
-    This function compute the tests check for each station
-
-    Keyword arguments:
-    df_stations -- pandas.dataframe with data for different stations, for a certain time interval [rows:times, columns:variables]
-    key_station -- unique identifier for stations
-    config      -- dictionary with config info for all tests [defaul: in parames.json file]
-    """
-    config = complete_config(config)
-
-    if key_station is None:
-        key_station = DEFAULT['INFO']['KEY_STATION']
-    stations_tests = df_stations.groupby(key_station, group_keys=False).apply(lambda station: allTests(station, config))
-    return stations_tests
