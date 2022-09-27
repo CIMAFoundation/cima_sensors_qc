@@ -27,17 +27,6 @@ def quality_label(qc):
     return label
 
 ################################################################################
-def complete_settings(settings=None):
-    """This function complete the config file"""
-    if settings is None:
-        settings = DEFAULT
-    else:
-        for kk in ['WINDOW', 'VARS_CHECK', 'VARS_CONS', 'RANGES', 'STEPS', 'VARIATIONS']:
-            if not (kk in settings.keys()):
-                settings[kk] = DEFAULT[kk]
-    return settings
-
-################################################################################
 def quality_test(df_station: pd.DataFrame, settings: Dict=DEFAULT):
     """
     This function compute all the tests sequentially for the single station
@@ -49,7 +38,6 @@ def quality_test(df_station: pd.DataFrame, settings: Dict=DEFAULT):
     df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
     settings   -- dictionary with config info for all tests
     """
-    settings = complete_settings(settings)
     check = InternalCheck(settings)
 
     window = check.settings['WINDOW']

@@ -9,7 +9,13 @@ from .settings import *
 ################################################################################
 @dataclass
 class InternalCheck():
-    settings: Dict = field(default_factory=DEFAULT, init=True)
+    settings: Dict = field(default_factory=lambda: DEFAULT, init=True)
+
+    def __post_init__(self):
+        """Complete the settings"""
+        for kk in DEFAULT.keys():
+            if not (kk in self.settings.keys()):
+                self.settings[kk] = DEFAULT[kk]
 
     def complete_test(self, df_station: pd.DataFrame) -> bool:
         """
