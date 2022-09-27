@@ -12,7 +12,7 @@ INFO = {
         }
     }
 
-DEFAULT_INTERNAL_CHECK = {
+DEFAULT = {
         "WINDOW":3,
         "VARS_CHECK": ["t", "h", "p", "ws", "wd"],
         "VARS_CONS": ["ws", "wd"],
