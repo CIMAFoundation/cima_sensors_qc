@@ -1,7 +1,5 @@
 import os
 
-NODATAVAL = -9999
-
 INFO = {
         "DT": "10min",
         "KEY_STATION": "station_id",
