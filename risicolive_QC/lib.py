@@ -42,8 +42,8 @@ def all_tests(df_station: pd.DataFrame, config=None):
     """
     This function compute all the tests sequentially for the single station
     complete/consistency/range tests -> computed at each time separately
-    step test -> computed in a 2-time window
-    time persistence test -> computed in a sliding window
+    step test                        -> computed in a 2-time window
+    time persistence test            -> computed in a sliding window
 
     Keyword arguments:
     df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
@@ -55,19 +55,20 @@ def all_tests(df_station: pd.DataFrame, config=None):
     window = config['WINDOW']
     WW = window-1
     df_station_check = df_station.copy()
-    for idx in df_station.index[WW:]:
-        if not complete_test(df_station.loc[idx:idx], config['VARS_CHECK']):
-            df_station_check.loc[idx, 'QC'] = 0
-        elif not consistency_test(df_station.loc[idx:idx], config['VARS_CONS']):
-            df_station_check.loc[idx, 'QC'] = 1
-        elif not range_test(df_station.loc[idx:idx], config['RANGES']):
-            df_station_check.loc[idx, 'QC'] = 2
-        elif not step_test(df_station.loc[idx-1:idx], config['STEPS']):
-            df_station_check.loc[idx, 'QC'] = 3
-        elif not time_persistence_test(df_station.loc[idx-WW:idx], config['VARIATIONS']):
-            df_station_check.loc[idx, 'QC'] = 4
+    df_station_check.loc[:, 'QC'] = None
+    for idx in range(WW, len(df_station)):
+        if not complete_test(df_station.iloc[idx:idx+1], config['VARS_CHECK']):
+            df_station_check.iloc[(idx, -1)] = 0
+        elif not consistency_test(df_station.iloc[idx:idx+1], config['VARS_CONS']):
+            df_station_check.iloc[(idx, -1)] = 1
+        elif not range_test(df_station.iloc[idx:idx+1], config['RANGES']):
+            df_station_check.iloc[(idx, -1)] = 2
+        elif not step_test(df_station.iloc[idx-1:idx+1], config['STEPS']):
+            df_station_check.iloc[(idx, -1)] = 3
+        elif not time_persistence_test(df_station.iloc[idx-WW:idx+1], config['VARIATIONS']):
+            df_station_check.iloc[(idx, -1)] = 4
         else:
-            df_station_check.loc[idx, 'QC'] = 5
+            df_station_check.iloc[(idx, -1)] = 5
     df_station_check.loc[:, 'QC_label'] = df_station_check['QC'].apply(lambda qc: quality(qc))
     return df_station_check
 
