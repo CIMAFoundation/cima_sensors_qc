@@ -51,20 +51,23 @@ def quality_test(df_station: pd.DataFrame, settings: Dict=DEFAULT):
 
     window = check.settings['WINDOW']
     WW = window-1
-    df_station_check = df_station.copy()
-    df_station_check.loc[:, 'QC'] = None
+    df_check = pd.DataFrame(index=df_station.index, columns=['QC', 'QC_LABEL'])
+
+    qc_column = df_check['QC']
     for idx in range(WW, len(df_station)):
         if not check.complete_test(df_station.iloc[idx:idx+1]):
-            df_station_check.iloc[(idx, -1)] = 0
+            qc_column.iloc[idx] = 0
         elif not check.consistency_test(df_station.iloc[idx:idx+1]):
-            df_station_check.iloc[(idx, -1)] = 1
+            qc_column.iloc[idx] = 1
         elif not check.range_test(df_station.iloc[idx:idx+1]):
-            df_station_check.iloc[(idx, -1)] = 2
+            qc_column.iloc[idx] = 2
         elif not check.step_test(df_station.iloc[idx-1:idx+1]):
-            df_station_check.iloc[(idx, -1)] = 3
+            qc_column.iloc[idx] = 3
         elif not check.time_persistence_test(df_station.iloc[idx-WW:idx+1]):
-            df_station_check.iloc[(idx, -1)] = 4
+            qc_column.iloc[idx] = 4
         else:
-            df_station_check.iloc[(idx, -1)] = 5
-    df_station_check.loc[:, 'QC_label'] = df_station_check['QC'].apply(lambda qc: quality_label(qc))
-    return df_station_check
+            qc_column.iloc[idx] = 5
+
+    df_check.loc[:, 'QC_LABEL'] = df_check['QC'].apply(lambda qc: quality_label(qc))
+
+    return df_check
