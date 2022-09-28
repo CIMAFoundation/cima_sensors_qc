@@ -17,6 +17,27 @@ class InternalCheck():
             if not (kk in self.settings.keys()):
                 self.settings[kk] = DEFAULT[kk]
 
+
+    def all_test(self, df_station: pd.DataFrame) -> pd.DataFrame:
+        WW = self.settings['WINDOW']-1
+
+        df_check = pd.DataFrame(index=df_station.index, columns=['QC'])
+        for idx in range(WW, len(df_station)):
+            if not self.complete_test(df_station.iloc[idx:idx+1]):
+                df_check.iloc[idx] = 0
+            elif not self.consistency_test(df_station.iloc[idx:idx+1]):
+                df_check.iloc[idx] = 1
+            elif not self.range_test(df_station.iloc[idx:idx+1]):
+                df_check.iloc[idx] = 2
+            elif not self.step_test(df_station.iloc[idx-1:idx+1]):
+                df_check.iloc[idx] = 3
+            elif not self.time_persistence_test(df_station.iloc[idx-WW:idx+1]):
+                df_check.iloc[idx] = 4
+            else:
+                df_check.iloc[idx] = 5
+        return df_check
+
+
     def complete_test(self, df_station: pd.DataFrame) -> bool:
         """
         The function checks whether all data for the specified variables are present for each time instant

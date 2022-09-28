@@ -1,4 +1,5 @@
 import pandas as pd
+from enum import Enum
 from .tests import *
 from .settings import *
 
