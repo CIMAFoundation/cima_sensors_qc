@@ -2,6 +2,15 @@ import pandas as pd
 from .tests import *
 from .settings import *
 
+class QualityLabel(Enum):
+    """
+    Enum for the quality label
+    """
+    INCOMPLETE = 3
+    WRONG = 2
+    SUSPICIOUS = 1
+    GOOD = 0
+
 ################################################################################
 def quality_label(qc):
     """
@@ -15,16 +24,16 @@ def quality_label(qc):
     QC -- value to check
     """
     if (qc==0) or (qc==1):
-        label = 'incomplete'
+        label = QualityLabel.INCOMPLETE
     elif (qc==2):
-        label = 'wrong'
+        label = QualityLabel.WRONG
     elif (qc==3) or (qc==4):
-        label = 'suspicious'
+        label = QualityLabel.SUSPICIOUS
     elif (qc==5):
-        label = 'good'
+        label = QualityLabel.GOOD
     else:
         label = None
-    return label
+    return label.name if label else None
 
 ################################################################################
 def quality_test(df_station: pd.DataFrame, settings: Dict=DEFAULT):
