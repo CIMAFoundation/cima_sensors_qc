@@ -37,7 +37,7 @@ def quality_label(qc):
     return label.name if label else None
 
 ################################################################################
-def quality_test(df_station: pd.DataFrame, settings: Dict=DEFAULT):
+def quality_check(df_station: pd.DataFrame, settings: Dict=DEFAULT):
     """
     This function compute all the tests sequentially for the single station
     complete/consistency/range tests -> computed at each time separately
@@ -48,27 +48,8 @@ def quality_test(df_station: pd.DataFrame, settings: Dict=DEFAULT):
     df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
     settings   -- dictionary with config info for all tests
     """
-    check = InternalCheck(settings)
-
-    window = check.settings['WINDOW']
-    WW = window-1
-    df_check = pd.DataFrame(index=df_station.index, columns=['QC', 'QC_LABEL'])
-
-    qc_column = df_check['QC']
-    for idx in range(WW, len(df_station)):
-        if not check.complete_test(df_station.iloc[idx:idx+1]):
-            qc_column.iloc[idx] = 0
-        elif not check.consistency_test(df_station.iloc[idx:idx+1]):
-            qc_column.iloc[idx] = 1
-        elif not check.range_test(df_station.iloc[idx:idx+1]):
-            qc_column.iloc[idx] = 2
-        elif not check.step_test(df_station.iloc[idx-1:idx+1]):
-            qc_column.iloc[idx] = 3
-        elif not check.time_persistence_test(df_station.iloc[idx-WW:idx+1]):
-            qc_column.iloc[idx] = 4
-        else:
-            qc_column.iloc[idx] = 5
-
+    internal_check = InternalCheck(settings)
+    df_check = internal_check.all_test(df_station)
     df_check.loc[:, 'QC_LABEL'] = df_check['QC'].apply(lambda qc: quality_label(qc))
 
     return df_check
