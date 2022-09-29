@@ -19,118 +19,110 @@ class InternalCheck():
 
 
     def all_test(self, df_station: pd.DataFrame) -> pd.DataFrame:
-        WW = self.settings['WINDOW']-1
-
         df_check = pd.DataFrame(index=df_station.index, columns=['QC'])
-        for idx in range(WW, len(df_station)):
-            if not self.complete_test(df_station.iloc[idx:idx+1]):
-                df_check.iloc[idx] = 0
-            elif not self.consistency_test(df_station.iloc[idx:idx+1]):
-                df_check.iloc[idx] = 1
-            elif not self.range_test(df_station.iloc[idx:idx+1]):
-                df_check.iloc[idx] = 2
-            elif not self.step_test(df_station.iloc[idx-1:idx+1]):
-                df_check.iloc[idx] = 3
-            elif not self.time_persistence_test(df_station.iloc[idx-WW:idx+1]):
-                df_check.iloc[idx] = 4
-            else:
-                df_check.iloc[idx] = 5
+
+        df_station_check = df_station.copy()
+        test_1 = self.complete_test(df_station_check)
+        df_check.loc[test_1[~test_1].index, 'QC'] = 0
+
+        test_2 = self.consistency_test(df_station_check[test_1])
+        df_check.loc[test_2[~test_2].index, 'QC'] = 1
+
+        test_3 = self.range_test(df_station_check[test_1][test_2])
+        df_check.loc[test_3[~test_3].index, 'QC'] = 2
+
+        df_station_check.loc[test_3[~test_3].index] = np.nan
+        test_4 = self.step_test(df_station_check[test_1][test_2][test_3])
+        df_check.loc[test_4[~test_4].index, 'QC'] = 3
+
+        df_station_check.loc[test_4[~test_4].index] = np.nan
+        test_5 = self.persistence_test(df_station_check[test_1][test_2][test_3][test_4], self.settings['WINDOW'])
+        df_check.loc[test_5[~test_5].index, 'QC'] = 4
+
+        df_check.loc[test_5[test_5].index, 'QC'] = 5
+
         return df_check
 
 
-    def complete_test(self, df_station: pd.DataFrame) -> bool:
+    def complete_test(self, df: pd.DataFrame) -> pd.Series:
         """
         The function checks whether all data for the specified variables are present for each time instant
-        It returns False if at least one istant is not complete.
-        This test can be computed on the single row (e.g. for each time)
-        self.vars_check -- variables to check
+        self.settings['VARS_CHECK'] -- variables to check
 
         Keyword arguments:
-        df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
+        df-- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
-        df_flagged = df_station.copy()
-        vars = self.settings['VARS_CHECK']
-        df_flagged['FLAG_NaN'] = df_flagged[vars].isnull().any(axis='columns')
-        result = not df_flagged['FLAG_NaN'].any()
-        return result
+        return df[self.settings['VARS_CHECK']].apply(lambda row: self.nan_check(row), axis=1)
 
-
-    def consistency_test(self, df_station: pd.DataFrame) -> bool:
+    def consistency_test(self, df: pd.DataFrame) -> pd.Series:
         """
-        The function checks data consistency for two variables A and B in each time instant:
-        if both A and B are not NaN, they must be both zero or non-zero.
-        It return False if at least one istant is not consistent
-        This test can be computed on the single row (e.g. for each time)
-        self.vars_cons -- variables A, B to check
+        The function checks data consistency for two variables A and B in each time instant: they must be both zero or non-zero.
+        self.settings['VARS_CHECK'] -- variables A, B to check
 
         Keyword arguments:
-        df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
+        df -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
-        df_flagged = df_station.copy()
-        vars = self.settings['VARS_CONS']
-        idx = ~((df_flagged[vars[0]].isna()) & (df_flagged[vars[1]].isna()))
-        df_flagged.loc[idx, 'FLAG_CONSISTENCY'] = df_flagged[idx].apply(lambda row: np.where(((row[vars[0]]==0) & (row[vars[1]]!=0)) | ((row[vars[0]]!=0) & (row[vars[1]]==0)), True, False), axis=1)
-        result = not df_flagged['FLAG_CONSISTENCY'].any()
-        return result
+        return df[self.settings['VARS_CONS']].apply(lambda row: self.zeros_check(row), axis=1)
 
-
-    def range_test(self, df_station: pd.DataFrame) -> bool:
+    def range_test(self, df: pd.DataFrame) -> pd.Series:
         """
         The function checks if values for each variables are in a certain range
         It return false if at least one istant presents at least one variable out of the range
-        This test can be computed on the single row (e.g. for each time)
-        self.ranges -- dictionary with ranges for each variable to check
+        self.settings['RANGES'] -- dictionary with ranges for each variable to check
 
         Keyword arguments:
-        df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
+        df -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
-        df_flagged = df_station.copy()
-        ranges = self.settings['RANGES']
-        for kk in ranges.keys():
-            df_flagged.loc[:, 'CHECK_RANGE_{}'.format(kk)] = df_flagged.apply(lambda row: np.where( ( (row[kk]>=ranges[kk][0]) & (row[kk]<=ranges[kk][1]) ) | (np.isnan(row[kk])), False, True), axis=1)
-        df_flagged['FLAG_RANGE'] = df_flagged[['CHECK_RANGE_{}'.format(kk) for kk in ranges.keys()]].any(axis='columns')
-        result = not df_flagged['FLAG_RANGE'].any()
-        return result
+        vars = self.settings['RANGES'].keys()
+        mins = [self.settings['RANGES'][v][0] for v in vars]
+        maxs = [self.settings['RANGES'][v][1] for v in vars]
+        return df[vars].apply(lambda row: self.range_check(row, mins, maxs), axis=1).all(axis=1)
 
-
-    def step_test(self, df_station: pd.DataFrame) -> bool:
+    def step_test(self, df: pd.DataFrame) -> pd.Series:
         """
         The function checks if non-physical steps are present
         It return False if at least one istant presents non-physical step in at least one variable
-        This test must be computed on at least two rows (e.g. for two consecutive times)
-        self.steps -- dictionary with physically-accepted step for each variable
+        self.settings['STEPS'] -- dictionary with physically-accepted step for each variable
 
         Keyword arguments:
-        df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
+        df -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
-        df_flagged = df_station.copy()
-        steps = self.settings['STEPS']
-        for kk in steps.keys():
-            df_flagged.loc[:,'diff_backward_{}'.format(kk)] = np.abs(df_flagged[kk].diff(periods=1))
-            df_flagged.loc[:, 'CHECK_STEP_{}'.format(kk)] = df_flagged.apply(lambda row: np.where(row['diff_backward_{}'.format(kk)]>=steps[kk], True, False), axis=1)
-        df_flagged['FLAG_STEP'] = df_flagged[['CHECK_STEP_{}'.format(kk) for kk in steps.keys()]].any(axis='columns')
-        result = not df_flagged['FLAG_STEP'].any()
-        return result
+        df_check = pd.DataFrame(index=df.index, columns=self.settings['STEPS'].keys())
+        for vv in self.settings['STEPS'].keys():
+            df_check.loc[:, vv] = df[vv].rolling(2).apply(lambda ww: self.step_check(ww, self.settings['STEPS'][vv]), raw=True)
+        return df_check.all(axis=1)
 
-
-    def time_persistence_test(self, df_station: pd.DataFrame) -> bool:
+    def persistence_test(self, df: pd.DataFrame, window: int) -> pd.Series:
         """
         The function checks if data can be considered time fixed
         It returns False if at least one data is time fixed in the time window considered
-        This test must be computed on at least two rows (e.g. for two consecutive times)
-        self.variations -- dictionary with minimum variations accepted for each variable, for a certain range [structure: [min_var, min, max]]
+        self.settings['VARIATIONS'] -- dictionary with minimum variations accepted for each variable, for a certain range [structure: [min_var, min, max]]
 
         Keyword arguments:
-        df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
+        df -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
-        df_flagged = df_station.copy()
-        flags = dict()
-        variations = self.settings['VARIATIONS']
-        for kk in variations.keys():
-            df_flagged.loc[:, 'diff_backward_{}'.format(kk)] = np.abs(df_flagged.loc[:, kk].diff(periods=1))
-            df_flagged.loc[:, 'CHECK_PERSISTENCE_{}'.format(kk)] = df_flagged.apply(lambda row: np.where((row['diff_backward_{}'.format(kk)]<variations[kk][0]) & (row[kk]>=variations[kk][1]) & (row[kk]<=variations[kk][2]) , True, False), axis=1)
-            flags['FLAG_PERSISTENCE_{}'.format(kk)] = [df_flagged['CHECK_PERSISTENCE_{}'.format(kk)].iloc[1:].all().item()]
-            result = not pd.DataFrame(flags).any(axis='columns').item()
-        return result
+        df_check = pd.DataFrame(index=df.index, columns=self.settings['VARIATIONS'].keys())
+        for vv in self.settings['VARIATIONS'].keys():
+            df_check.loc[:, vv] = df[vv].rolling(window).apply(lambda ww: self.persistence_check(ww, self.settings['VARIATIONS'][vv][0], self.settings['VARIATIONS'][vv][1], self.settings['VARIATIONS'][vv][2]), raw=True)
+        return df_check.all(axis=1)
 
-################################################################################
+
+    def nan_check(self, array: np.array) -> bool:
+        """This function checks if NaN values are present in array"""
+        return np.count_nonzero(np.isnan(array))==0
+
+    def zeros_check(self, array: np.array) -> bool:
+        """This function checks if all array elements are zero or non-zero"""
+        return (np.count_nonzero(array)==array.shape[0]) or (np.count_nonzero(array)==0)
+
+    def range_check(self, array: np.array, a: np.array, b: np.array) -> bool:
+        """This function check if elements are in the range"""
+        return (array>=a) & (array<=b)
+
+    def step_check(self, array: np.array, step: float) -> bool:
+        """This function checks if there are not step in a 2-d array"""
+        return (np.abs(array[1]-array[0])<=step)
+
+    def persistence_check(self, array: np.array, var: float, a: float, b: float) -> bool:
+        """This function checks if elements are considered constants"""
+        return not ((np.count_nonzero((array>=a)&(array<=b))==array.shape[0]) & (np.count_nonzero(np.abs(np.ediff1d(array))<var)==(array.shape[0]-1)))
