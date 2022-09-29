@@ -40,16 +40,15 @@ def quality_label(qc):
 def quality_check(df_station: pd.DataFrame, settings: Dict=DEFAULT):
     """
     This function compute all the tests sequentially for the single station
-    complete/consistency/range tests -> computed at each time separately
-    step test                        -> computed in a 2-time window
-    time persistence test            -> computed in a sliding window
 
     Keyword arguments:
     df_station -- pandas.dataframe with data for a single station [rows:times, columns:variables]
     settings   -- dictionary with config info for all tests
     """
+    df_check = pd.DataFrame(index=df_station.index, columns=['QC', 'QC_LABEL'])
+
     internal_check = InternalCheck(settings)
-    df_check = internal_check.all_test(df_station)
+    df_check.loc[:, 'QC'] = internal_check.all_test(df_station)
     df_check.loc[:, 'QC_LABEL'] = df_check['QC'].apply(lambda qc: quality_label(qc))
 
     return df_check
