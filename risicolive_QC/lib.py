@@ -12,25 +12,26 @@ class QualityLabel(Enum):
     SUSPICIOUS = 1
     GOOD = 0
 
+
 ################################################################################
 def quality_label(qc):
     """
     This function assigns the quality label:
-    - incomplete (QC=0/QC=1): complete or consistency tests not passed
-    - wrong (QC=2): range test non passed
-    - suspicious (QC=3/QC=4): step or time persistence tests non passed
-    - good (QC=5): all tests are passed
+    - incomplete: complete or consistency tests not passed
+    - wrong: range test non passed
+    - suspicious: step or time persistence tests non passed
+    - good: all tests are passed
 
     Keyword arguments:
-    QC -- value to check
+    qc -- value to check
     """
-    if (qc==0) or (qc==1):
+    if  (~(qc & FLAGS.OK_COMPLETE.value)) | (~(qc & FLAGS.OK_CONSISTENT.value)):
         label = QualityLabel.INCOMPLETE
-    elif (qc==2):
+    elif ~(qc & FLAGS.OK_RANGE.value):
         label = QualityLabel.WRONG
-    elif (qc==3) or (qc==4):
+    elif (~(qc & FLAGS.OK_NO_STEPS.value)) | (~(qc & FLAGS.OK_NO_PERSISTENCE.value)):
         label = QualityLabel.SUSPICIOUS
-    elif (qc==5):
+    elif qc & (FLAGS.OK_COMPLETE.value  | FLAGS.OK_CONSISTENT.value  | FLAGS.OK_RANGE.value  | FLAGS.OK_NO_STEPS.value  | FLAGS.OK_NO_PERSISTENCE.value):
         label = QualityLabel.GOOD
     else:
         label = None

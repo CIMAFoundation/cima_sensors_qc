@@ -15,8 +15,6 @@ class FLAGS(Enum):
     OK_RANGE          = np.int16(0b0000000000000100)
     OK_NO_STEPS       = np.int16(0b0000000000001000)
     OK_NO_PERSISTENCE = np.int16(0b0000000000010000)
-    ALL_OK            = np.int16(0b1000000000000000)
-
 
 ################################################################################
 ### QUALITY CHECK TESTS ########################################################
@@ -34,7 +32,7 @@ class InternalCheck():
 
     def all_test(self, df_station: pd.DataFrame) -> pd.DataFrame:
         """This function compute all the tests"""
-        df_check = pd.Series(index=df_station.index, name='internal_check')
+        df_check = pd.Series(index=df_station.index, name='internal_check', dtype='int16')
         df_check.loc[:] = FLAGS.ALL_NO.value
 
         df_check.loc[self.complete_test(df_station)] += FLAGS.OK_COMPLETE.value
