@@ -22,26 +22,22 @@ class InternalCheck():
         """This function compute all the tests"""
         df_check = pd.Series(index=df_station.index, name='internal_check')
 
-        df_station_check = df_station.copy()
-
-        test_1 = self.complete_test(df_station_check)
+        test_1 = self.complete_test(df_station)
         df_check.loc[test_1[~test_1].index] = 0
 
-        test_2 = self.consistency_test(df_station_check[test_1])
+        test_2 = self.consistency_test(df_station[test_1])
         df_check.loc[test_2[~test_2].index] = 1
 
-        test_3 = self.range_test(df_station_check[test_1][test_2])
+        test_3 = self.range_test(df_station[test_1][test_2])
         df_check.loc[test_3[~test_3].index] = 2
 
-        df_station_check.loc[test_3[~test_3].index] = np.nan
-        test_4 = self.step_test(df_station_check[test_1][test_2][test_3])
-        df_check.loc[test_4[(~test_4)].index] = 3
+        test_4 = self.step_test(df_station)
+        df_check.loc[test_4[(test_1) & (test_2) & (test_3) & (~test_4)].index] = 3
 
-        df_station_check.loc[test_4[~test_4].index] = np.nan
-        test_5 = self.persistence_test(df_station_check[test_1][test_2][test_3][test_4])
-        df_check.loc[test_5[(~test_5)].index] = 4
+        test_5 = self.persistence_test(df_station)
+        df_check.loc[test_5[(test_1) & (test_2) & (test_3) & (test_4) & (~test_5)].index] = 4
 
-        df_check.loc[test_5[test_5].index] = 5
+        df_check.loc[test_5[(test_1) & (test_2) & (test_3) & (test_4) & (test_5)].index] = 5
 
         return df_check
 
