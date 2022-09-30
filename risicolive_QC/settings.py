@@ -14,7 +14,7 @@ INFO = {
 
 DEFAULT = {
         "WINDOW":3,
-        "VARS_CHECK": ["t", "h", "p", "ws", "wd"],
+        "VARS_CHECK": ["t", "h", "p", "ws"],
         "VARS_CONS": ["ws", "wd"],
         "RANGES": {
         	"t":  [-30, 50],
