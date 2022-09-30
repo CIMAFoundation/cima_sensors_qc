@@ -1,5 +1,3 @@
-import os
-
 INFO = {
         "DT": "10min",
         "KEY_STATION": "station_id",
@@ -13,8 +11,7 @@ INFO = {
     }
 
 DEFAULT = {
-        "WINDOW":3,
-        "VARS_CHECK": ["t", "h", "p", "ws", "wd"],
+        "VARS_CHECK": ["t", "h", "p", "ws"],
         "VARS_CONS": ["ws", "wd"],
         "RANGES": {
         	"t":  [-30, 50],
@@ -28,6 +25,7 @@ DEFAULT = {
         	"h":  10,
         	"ws": 10
     	},
+        "WINDOW":3,
     	"VARIATIONS": {
         	"t":  [0.01, -30, 50],
         	"h":  [0.01, 0, 95],
