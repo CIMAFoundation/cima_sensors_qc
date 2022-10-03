@@ -14,7 +14,7 @@ class QualityLabel(Enum):
 
 
 ################################################################################
-def quality_label(qc):
+def quality_label(qc_val):
     """
     This function assigns the quality label:
     - incomplete: complete or consistency tests not passed
@@ -23,15 +23,15 @@ def quality_label(qc):
     - good: all tests are passed
 
     Keyword arguments:
-    qc -- value to check
+    qc_val -- value to check
     """
-    if  (~(qc & FLAGS.OK_COMPLETE.value)) | (~(qc & FLAGS.OK_CONSISTENT.value)):
+    if not((qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value)):
         label = QualityLabel.INCOMPLETE
-    elif ~(qc & FLAGS.OK_RANGE.value):
+    elif not (qc_val & FLAGS.OK_RANGE.value):
         label = QualityLabel.WRONG
-    elif (~(qc & FLAGS.OK_NO_STEPS.value)) | (~(qc & FLAGS.OK_NO_PERSISTENCE.value)):
+    elif not((qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value)):
         label = QualityLabel.SUSPICIOUS
-    elif qc & (FLAGS.OK_COMPLETE.value  | FLAGS.OK_CONSISTENT.value  | FLAGS.OK_RANGE.value  | FLAGS.OK_NO_STEPS.value  | FLAGS.OK_NO_PERSISTENCE.value):
+    elif (qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value) and (qc_val & FLAGS.OK_RANGE.value) and (qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value):
         label = QualityLabel.GOOD
     else:
         label = None
@@ -50,6 +50,6 @@ def quality_check(df_station: pd.DataFrame, settings: Dict=DEFAULT):
 
     internal_check = InternalCheck(settings)
     df_check.loc[:, 'QC'] = internal_check.all_test(df_station)
-    df_check.loc[:, 'QC_LABEL'] = df_check['QC'].apply(lambda qc: quality_label(qc))
+    df_check.loc[:, 'QC_LABEL'] = df_check['QC'].apply(lambda qc_val: quality_label(qc_val))
 
     return df_check
