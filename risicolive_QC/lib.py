@@ -25,14 +25,14 @@ def quality_label(qc_val):
     Keyword arguments:
     qc_val -- value to check
     """
-    if (qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value) and (qc_val & FLAGS.OK_RANGE.value) and (qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value):
-        label = QualityLabel.GOOD
-    elif not((qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value)):
-        label = QualityLabel.SUSPICIOUS
+    if not((qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value)):
+        label = QualityLabel.INCOMPLETE
     elif not (qc_val & FLAGS.OK_RANGE.value):
         label = QualityLabel.WRONG
-    elif not((qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value)):
-        label = QualityLabel.INCOMPLETE
+    elif not((qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value)):
+        label = QualityLabel.SUSPICIOUS
+    elif (qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value) and (qc_val & FLAGS.OK_RANGE.value) and (qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value):
+        label = QualityLabel.GOOD
     else:
         label = None
     return label.name if label else None
