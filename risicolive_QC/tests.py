@@ -83,7 +83,7 @@ class InternalCheck():
     def step_test(self, df: pd.DataFrame) -> pd.Series:
         """
         The function checks if non-physical steps are present
-        It return False if at least one variable presents non-physical step
+        It return False if at least one variable presents non-physical step, or if the test can not be performed
         self.settings['STEPS'] -- dictionary with physically-accepted step for each variable
 
         Keyword arguments:
@@ -98,7 +98,7 @@ class InternalCheck():
     def persistence_test(self, df: pd.DataFrame) -> pd.Series:
         """
         The function checks if data can be considered time fixed
-        It returns False if at least one variable is fixed in the time window considered
+        It returns False if at least one variable is fixed in the time window considered, or if the test can not be performed
         self.settings['VARIATIONS'] -- dictionary with minimum variations accepted for each variable, for a certain range [structure: [min_var, min, max]]
         self.settings['WINDOW']     -- sliding window
         Keyword arguments:
