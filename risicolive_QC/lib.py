@@ -12,26 +12,27 @@ class QualityLabel(Enum):
     SUSPICIOUS = 1
     GOOD = 0
 
+
 ################################################################################
-def quality_label(qc):
+def quality_label(qc_val):
     """
     This function assigns the quality label:
-    - incomplete (QC=0/QC=1): complete or consistency tests not passed
-    - wrong (QC=2): range test non passed
-    - suspicious (QC=3/QC=4): step or time persistence tests non passed
-    - good (QC=5): all tests are passed
+    - good: all tests are passed
+    - suspicious: step or time persistence tests non passed
+    - wrong: range test non passed
+    - incomplete: complete or consistency tests not passed
 
     Keyword arguments:
-    QC -- value to check
+    qc_val -- value to check
     """
-    if (qc==0) or (qc==1):
-        label = QualityLabel.INCOMPLETE
-    elif (qc==2):
-        label = QualityLabel.WRONG
-    elif (qc==3) or (qc==4):
-        label = QualityLabel.SUSPICIOUS
-    elif (qc==5):
+    if (qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value) and (qc_val & FLAGS.OK_RANGE.value) and (qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value):
         label = QualityLabel.GOOD
+    elif not((qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value)):
+        label = QualityLabel.SUSPICIOUS
+    elif not (qc_val & FLAGS.OK_RANGE.value):
+        label = QualityLabel.WRONG
+    elif not((qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value)):
+        label = QualityLabel.INCOMPLETE
     else:
         label = None
     return label.name if label else None
@@ -49,6 +50,6 @@ def quality_check(df_station: pd.DataFrame, settings: Dict=DEFAULT):
 
     internal_check = InternalCheck(settings)
     df_check.loc[:, 'QC'] = internal_check.all_test(df_station)
-    df_check.loc[:, 'QC_LABEL'] = df_check['QC'].apply(lambda qc: quality_label(qc))
+    df_check.loc[:, 'QC_LABEL'] = df_check['QC'].apply(lambda qc_val: quality_label(qc_val))
 
     return df_check
