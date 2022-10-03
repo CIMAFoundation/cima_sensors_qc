@@ -17,22 +17,22 @@ class QualityLabel(Enum):
 def quality_label(qc_val):
     """
     This function assigns the quality label:
-    - incomplete: complete or consistency tests not passed
-    - wrong: range test non passed
-    - suspicious: step or time persistence tests non passed
     - good: all tests are passed
+    - suspicious: step or time persistence tests non passed
+    - wrong: range test non passed
+    - incomplete: complete or consistency tests not passed
 
     Keyword arguments:
     qc_val -- value to check
     """
-    if not((qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value)):
-        label = QualityLabel.INCOMPLETE
-    elif not (qc_val & FLAGS.OK_RANGE.value):
-        label = QualityLabel.WRONG
+    if (qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value) and (qc_val & FLAGS.OK_RANGE.value) and (qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value):
+        label = QualityLabel.GOOD
     elif not((qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value)):
         label = QualityLabel.SUSPICIOUS
-    elif (qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value) and (qc_val & FLAGS.OK_RANGE.value) and (qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value):
-        label = QualityLabel.GOOD
+    elif not (qc_val & FLAGS.OK_RANGE.value):
+        label = QualityLabel.WRONG
+    elif not((qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value)):
+        label = QualityLabel.INCOMPLETE
     else:
         label = None
     return label.name if label else None
