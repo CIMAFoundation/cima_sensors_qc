@@ -12,6 +12,17 @@ class QualityLabel(Enum):
     SUSPICIOUS = 1
     GOOD       = 0
 
+TEST_COMPLETE = (FLAGS.OK_COMPLETE.value | FLAGS.OK_CONSISTENT.value)
+TEST_RANGE_OK = FLAGS.OK_RANGE.value
+TEST_NOT_SUSPICIOUS = (
+    FLAGS.OK_NO_STEPS.value | FLAGS.OK_NO_PERSISTENCE.value
+)
+TEST_GOOD = (
+    FLAGS.OK_COMPLETE.value | FLAGS.OK_CONSISTENT.value |
+    FLAGS.OK_RANGE.value | FLAGS.OK_NO_STEPS.value |
+    FLAGS.OK_NO_PERSISTENCE.value
+)
+
 
 ################################################################################
 def quality_label(qc_val):
@@ -22,18 +33,19 @@ def quality_label(qc_val):
     - suspicious: step or time persistence tests are non passed
     - good:       all tests are passed
     qc_val -- value to check
-    """
-    if not((qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value)):
+    """   
+    if (qc_val & TEST_COMPLETE) != TEST_COMPLETE:
         label = QualityLabel.INCOMPLETE
-    elif not (qc_val & FLAGS.OK_RANGE.value):
+    elif (qc_val & TEST_RANGE_OK) != TEST_RANGE_OK:
         label = QualityLabel.WRONG
-    elif not((qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value)):
+    elif (qc_val & TEST_NOT_SUSPICIOUS) != TEST_NOT_SUSPICIOUS:
         label = QualityLabel.SUSPICIOUS
-    elif (qc_val & FLAGS.OK_COMPLETE.value) and (qc_val & FLAGS.OK_CONSISTENT.value) and (qc_val & FLAGS.OK_RANGE.value) and (qc_val & FLAGS.OK_NO_STEPS.value) and (qc_val & FLAGS.OK_NO_PERSISTENCE.value):
+    elif (qc_val & TEST_GOOD) == TEST_GOOD:
         label = QualityLabel.GOOD
     else:
         label = None
     return label.name if label else None
+
 
 ################################################################################
 def quality_check(df_station: pd.DataFrame, settings: Dict=DEFAULT):
