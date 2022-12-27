@@ -33,7 +33,7 @@ def quality_label(qc_val):
     - suspicious: step or time persistence tests are non passed
     - good:       all tests are passed
     qc_val -- value to check
-    """   
+    """
     if (qc_val & TEST_COMPLETE) != TEST_COMPLETE:
         label = QualityLabel.INCOMPLETE
     elif (qc_val & TEST_RANGE_OK) != TEST_RANGE_OK:
