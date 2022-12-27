@@ -14,6 +14,8 @@ The quality tests considered are the following:
 
 See the **example_notebook.ipynb** for examples.
 
+**NOTE**: the time persistence test is not passed automatically by first time steps of the dataframe, since the test cannot be performed (no enough time steps).
+
 ---
 ## Quality check of weather stations for RISICO LIVE network
 DEFAULT configuration is setted for the quality check of data from weather stations used for the RISICO LIVE network.
