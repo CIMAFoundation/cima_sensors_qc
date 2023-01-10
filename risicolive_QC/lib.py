@@ -34,6 +34,8 @@ def quality_label(qc_val):
     - good:       all tests are passed
     qc_val -- value to check
     """
+    # cast qc_val to int before comparing
+    qc_val = np.uint16(qc_val)
     if (qc_val & TEST_COMPLETE) != TEST_COMPLETE:
         label = QualityLabel.INCOMPLETE
     elif (qc_val & TEST_RANGE_OK) != TEST_RANGE_OK:

@@ -9,12 +9,12 @@ class FLAGS(Enum):
     """
     Enum for the quality flags
     """
-    ALL_NO            = np.int16(0b0000000000000000) # none of the tests are passed
-    OK_COMPLETE       = np.int16(0b0000000000000001) # complete test is passed
-    OK_CONSISTENT     = np.int16(0b0000000000000010) # consistent test is passed
-    OK_RANGE          = np.int16(0b0000000000000100) # range test is passed
-    OK_NO_STEPS       = np.int16(0b0000000000001000) # step test is passed
-    OK_NO_PERSISTENCE = np.int16(0b0000000000010000) # persistence test is passed
+    ALL_NO            = np.uint16(0b0000000000000000) # none of the tests are passed
+    OK_COMPLETE       = np.uint16(0b0000000000000001) # complete test is passed
+    OK_CONSISTENT     = np.uint16(0b0000000000000010) # consistent test is passed
+    OK_RANGE          = np.uint16(0b0000000000000100) # range test is passed
+    OK_NO_STEPS       = np.uint16(0b0000000000001000) # step test is passed
+    OK_NO_PERSISTENCE = np.uint16(0b0000000000010000) # persistence test is passed
 
 ################################################################################
 ### QUALITY CHECK TESTS ########################################################
