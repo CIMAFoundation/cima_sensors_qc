@@ -49,7 +49,7 @@ class InternalCheck():
         self.settings['VARS_CHECK'] -- variables to check
         df                          -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
-        return df[self.settings['VARS_CHECK']].apply(lambda row: self.complete_check(row), axis=1)
+        return df[self.settings['VARS_CHECK']].notna().all(axis=1, bool_only=True)
 
     #def consistency_test(self, df: pd.DataFrame) -> pd.Series:
     #    """
@@ -101,9 +101,9 @@ class InternalCheck():
         return df_test.all(axis=1)
 
 
-    def complete_check(self, array: np.array) -> bool:
-        """This function returns True if the array does NOT contain NaN values"""
-        return np.count_nonzero(np.isnan(array))==0
+    #def complete_check(self, array: np.array) -> bool:
+    #    """This function returns True if the array does NOT contain NaN values"""
+    #    return np.count_nonzero(np.isnan(array))==0
 
     #def consistency_check(self, array: np.array) -> bool:
     #    """This function returns True if the first element is zero or NaN when the second element is NaN"""
