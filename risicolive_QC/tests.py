@@ -76,15 +76,18 @@ class InternalCheck():
     def step_test(self, df: pd.DataFrame) -> pd.Series:
         """
         The function checks if non-physical steps are present between two consecutive time steps (e.g. two consecutive rows)
-        It return False if at least one variable presents non-physical step, OR if the test can not be performed
+        It return False if at least one variable presents non-physical step, OR if the test can not be performed (presence of NaN values)
         self.settings['STEPS'] -- dictionary with physically-accepted step for each variable
         df                     -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
-        df_test = pd.DataFrame(index=df.index, columns=self.settings['STEPS'].keys())
-        for vv in self.settings['STEPS'].keys():
-            df_test.loc[:, vv] = df[vv].rolling(2).apply(lambda ww: self.no_step_check(ww, self.settings['STEPS'][vv]), raw=True)
-        df_test = df_test.fillna(False)
-        return df_test.all(axis=1)
+        vars = [self.settings['STEPS'][v] for v in self.settings['STEPS'].keys()]
+        return df[self.settings['STEPS']].diff(periods=1).abs().apply(lambda row: self.range_check(row, 0, vars), axis=1).all(axis=1, bool_only=True)
+
+        #df_test = pd.DataFrame(index=df.index, columns=self.settings['STEPS'].keys())
+        #for vv in self.settings['STEPS'].keys():
+        #    df_test.loc[:, vv] = df[vv].rolling(2).apply(lambda ww: self.no_step_check(ww, self.settings['STEPS'][vv]), raw=True)
+        #df_test = df_test.fillna(False)
+        #return df_test.all(axis=1)
 
     def persistence_test(self, df: pd.DataFrame) -> pd.Series:
         """
@@ -115,9 +118,9 @@ class InternalCheck():
         """This function returns True if element are in the range"""
         return (array>=a) & (array<=b)
 
-    def no_step_check(self, array: np.array, step: float) -> bool:
-        """This function returns True if there are no step in a 2-d array"""
-        return (np.abs(array[1]-array[0])<=step)
+    #def no_step_check(self, array: np.array, step: float) -> bool:
+    #    """This function returns True if there are no step in a 2-d array"""
+    #    return (np.abs(array[1]-array[0])<=step)
 
     def no_persistence_check(self, array: np.array, var: float, a: float, b: float) -> bool:
         """This function returns True if elements are not constants"""
