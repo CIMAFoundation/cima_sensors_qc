@@ -5,19 +5,16 @@ INFO = {
             "h":  { "info":"humidity",       "um": "."},
             "p":  { "info":"precipitation",  "um": "mm/dt"},
             "ws": {	"info":"wind speed",     "um": "m/s"},
-            "wd": { "info":"wind direction", "um": "deg"}
         }
     }
 
 DEFAULT = {
         "VARS_CHECK": ["t", "h", "p", "ws"],
-        "VARS_CONS": ["wd", "ws"],
         "RANGES": {
         	"t":  [-30, 50],
         	"h":  [0, 100],
         	"p":  [0, 400],
         	"ws": [0, 75],
-        	"wd": [0, 360]
             },
     	"STEPS": {
         	"t":  2,
