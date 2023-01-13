@@ -64,14 +64,14 @@ class InternalCheck():
     def range_test(self, df: pd.DataFrame) -> pd.Series:
         """
         The function checks if values for each variables are in a specified range: it return False if at least one variable is out of the range
-        NaN values are considered out of range
+        NOTE: NaN values are considered out of range
         This check is done for each time step (e.g. for each row of the dataset)
         self.settings['RANGES'] -- dictionary with ranges for each variable to check
         df                      -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
         mins = [self.settings['RANGES'][v][0] for v in self.settings['RANGES'].keys()]
         maxs = [self.settings['RANGES'][v][1] for v in self.settings['RANGES'].keys()]
-        return df[self.settings['RANGES'].keys()].apply(lambda row: self.range_check(row, mins, maxs), axis=1).all(axis=1)
+        return df[self.settings['RANGES'].keys()].apply(lambda row: self.range_check(row, mins, maxs), axis=1).all(axis=1, bool_only=True)
 
     def step_test(self, df: pd.DataFrame) -> pd.Series:
         """
