@@ -107,7 +107,9 @@ class InternalCheck():
 
     def consistency_check(self, array: np.array) -> bool:
         """This function returns True if the first element is zero or NaN when the second element is NaN"""
-        return ((array[0]!=np.nan) & (array[1]!=np.nan)) or ((array[0]==np.nan) & ((array[1]==0) | (array[1]==np.nan)))
+        a = array[0]
+        b = array[1]
+        return return ((not np.isnan(a)) & (not np.isnan(b))) or ( np.isnan(a) & ((b==0) | (np.isnan(b))))
 
     def range_check(self, array: np.array, a: np.array, b: np.array) -> bool:
         """This function returns True if element are in the range"""
