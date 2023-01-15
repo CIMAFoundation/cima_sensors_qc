@@ -80,14 +80,9 @@ class InternalCheck():
         self.settings['STEPS'] -- dictionary with physically-accepted step for each variable
         df                     -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
-        vars = [self.settings['STEPS'][v] for v in self.settings['STEPS'].keys()]
-        return df[self.settings['STEPS']].diff(periods=1).abs().apply(lambda row: self.range_check(row, 0, vars), axis=1).all(axis=1, bool_only=True)
-
-        #df_test = pd.DataFrame(index=df.index, columns=self.settings['STEPS'].keys())
-        #for vv in self.settings['STEPS'].keys():
-        #    df_test.loc[:, vv] = df[vv].rolling(2).apply(lambda ww: self.no_step_check(ww, self.settings['STEPS'][vv]), raw=True)
-        #df_test = df_test.fillna(False)
-        #return df_test.all(axis=1)
+        variables = list(self.settings['STEPS'].keys())
+        steps = [self.settings['STEPS'][v] for v in self.settings['STEPS'].keys()]
+        return df[variables].diff(periods=1).abs().apply(lambda row: self.range_check(row, 0, steps), axis=1).all(axis=1, bool_only=True)
 
     def persistence_test(self, df: pd.DataFrame) -> pd.Series:
         """
