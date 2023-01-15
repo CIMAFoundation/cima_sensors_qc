@@ -69,9 +69,10 @@ class InternalCheck():
         self.settings['RANGES'] -- dictionary with ranges for each variable to check
         df                      -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
+        variables = list(self.settings['RANGES'].keys())
         mins = [self.settings['RANGES'][v][0] for v in self.settings['RANGES'].keys()]
         maxs = [self.settings['RANGES'][v][1] for v in self.settings['RANGES'].keys()]
-        return df[self.settings['RANGES'].keys()].apply(lambda row: self.range_check(row, mins, maxs), axis=1).all(axis=1, bool_only=True)
+        return df[variables].apply(lambda row: self.range_check(row, mins, maxs), axis=1).all(axis=1, bool_only=True)
 
     def step_test(self, df: pd.DataFrame) -> pd.Series:
         """
