@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from risicolive_QC import InternalCheck
+from risicolive_QC import InternalCheck, quality_check
 
 ###
 settings = {
@@ -80,11 +80,13 @@ def main():
     ## COMPLETE TESTS
     df_all = pd.read_csv('test/test_ALL.csv', index_col=0)
     df_all['check'] = df_all['check'].astype('uint16')
-    print('   - all tests: ', df_all.check.equals(IC.all_test(df_all)))
-    print('        complete: ', df_all.check_COMPLETE.equals(IC.complete_test(df_all)))
-    print('        range: ', df_all.check_RANGE.equals(IC.range_test(df_all)))
-    print('        step: ', df_all.check_STEP.equals(IC.step_test(df_all)))
-    print('        persistence: ', df_all.check_PERSISTENCE.equals(IC.persistence_test(df_all)))
+    df_all_checked = quality_check(df_all, settings)
+    print('   - all tests: ', df_all.check.equals(df_all_checked.QC))
+    print('           complete: ', df_all.check_COMPLETE.equals(IC.complete_test(df_all)))
+    print('           range: ', df_all.check_RANGE.equals(IC.range_test(df_all)))
+    print('           step: ', df_all.check_STEP.equals(IC.step_test(df_all)))
+    print('           persistence: ', df_all.check_PERSISTENCE.equals(IC.persistence_test(df_all)))
+    print('     labels: ', df_all.check_LABEL.equals(df_all_checked.QC_LABEL))
 
 if __name__=='__main__':
     main()
