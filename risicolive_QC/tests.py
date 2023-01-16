@@ -32,13 +32,14 @@ class InternalCheck():
 
     def all_test(self, df_station: pd.DataFrame) -> pd.DataFrame:
         """This function compute all the tests"""
-        df_check = pd.Series(index=df_station.index, name='internal_check', dtype='int16')
+        df_check = pd.Series(index=df_station.index, name='internal_check', dtype='uint16')
         df_check.loc[:] = FLAGS.ALL_NO.value
         df_check.loc[self.complete_test(df_station)]    += FLAGS.OK_COMPLETE.value
         #df_check.loc[self.consistency_test(df_station)] += FLAGS.OK_CONSISTENT.value
         df_check.loc[self.range_test(df_station)]       += FLAGS.OK_RANGE.value
         df_check.loc[self.step_test(df_station)]        += FLAGS.OK_NO_STEPS.value
         df_check.loc[self.persistence_test(df_station)] += FLAGS.OK_NO_PERSISTENCE.value
+        df_check = df_check.astype('uint16')
         return df_check
 
 
