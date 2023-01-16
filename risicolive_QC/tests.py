@@ -77,29 +77,31 @@ class InternalCheck():
     def step_test(self, df: pd.DataFrame) -> pd.Series:
         """
         The function checks if non-physical steps are present between two consecutive time steps (e.g. two consecutive rows)
-        It return False if at least one variable presents non-physical step, OR if the test can not be performed (presence of NaN values)
+        It return False if at least one variable presents non-physical step
+        If the test can not be performed (e.g. presence of NaN values), it returns False
         self.settings['STEPS'] -- dictionary with physically-accepted step for each variable
         df                     -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
         variables = list(self.settings['STEPS'].keys())
         steps = [self.settings['STEPS'][v] for v in self.settings['STEPS'].keys()]
-        return df[variables].diff(periods=1).abs().apply(lambda row: self.range_check(row, 0, steps), axis=1).all(axis=1, bool_only=True)
+        return df[variables].diff(periods=1).abs().apply(lambda vars_check: self.range_check(vars_check=vars_check, min_vals=0, max_vals=steps), axis=1).all(axis=1, bool_only=True)
 
     def persistence_test(self, df: pd.DataFrame) -> pd.Series:
         """
         The function checks if data can be considered time fixed
-        It returns False if at least one variable is fixed in the time window considered, or if the test can not be performed
+        It returns False if at least one variable is fixed in the time window considered
+        If the test cannot be performed (e.g. presence of NaN values), it returns True
         self.settings['VARIATIONS'] -- dictionary with minimum variations accepted for each variable, for a certain range [structure: [min_var, min, max]]
         self.settings['WINDOW']     -- sliding window (e.g. time interval for persistence check)
         df                          -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """
         df_test = pd.DataFrame(index=df.index, columns=self.settings['VARIATIONS'].keys())
         for var in self.settings['VARIATIONS'].keys():
-            min_step = self.settings['VARIATIONS'][var][0]
+            min_variation = self.settings['VARIATIONS'][var][0]
             min_val  = self.settings['VARIATIONS'][var][1]
             max_val  = self.settings['VARIATIONS'][var][2]
-            df_test.loc[:, var] = df[var].rolling(self.settings['WINDOW']).apply(lambda var_check: self.no_persistence_check(var_check, min_step, min_val, max_val), raw=True)
-        df_test = df_test.fillna(False)
+            df_test[var] = df[var].rolling(self.settings['WINDOW']).apply(lambda var_check: self.no_persistence_check(var_check=var_check, min_variation=min_variation, min_val=min_val, max_val=max_val), raw=True)
+        df_test = df_test.fillna(1)
         return df_test.all(axis=1)
 
 
@@ -121,6 +123,7 @@ class InternalCheck():
     #    """This function returns True if there are no step in a 2-d array"""
     #    return (np.abs(array[1]-array[0])<=step)
 
-    def no_persistence_check(self, var_check: np.array, min_step: float, min_val: float, max_val: float) -> bool:
+    def no_persistence_check(self, var_check: np.array, min_variation: float, min_val: float, max_val: float) -> bool:
         """This function returns True if elements are not constants"""
-        return not ((np.count_nonzero((var_check>=min_val)&(var_check<=max_val))==var_check.shape[0]) & (np.count_nonzero(np.abs(np.ediff1d(var_check))<min_step)==(var_check.shape[0]-1)))
+        persistence = np.all((var_check>=min_val)&(var_check<=max_val)) and (np.abs(np.max(var_check)-np.min(var_check))<min_variation)
+        return not persistence
