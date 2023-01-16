@@ -31,7 +31,7 @@ class InternalCheck():
 
 
     def all_test(self, df_station: pd.DataFrame) -> pd.DataFrame:
-        """This function compute all the tests"""
+        """This function compute all the tests consecutively"""
         df_check = pd.Series(index=df_station.index, name='internal_check', dtype='uint16')
         df_check.loc[:] = FLAGS.ALL_NO.value
         df_check.loc[self.complete_test(df_station)]    += FLAGS.OK_COMPLETE.value
@@ -64,9 +64,9 @@ class InternalCheck():
 
     def range_test(self, df: pd.DataFrame) -> pd.Series:
         """
-        The function checks if values for each variables are in a specified range: it return False if at least one variable is out of the range
+        The function checks if values for each variables are in a specified range. This check is done for each time step (e.g. for each row of the dataset)
+        It return False if at least one variable is out of the range
         NOTE: NaN values are considered out of range
-        This check is done for each time step (e.g. for each row of the dataset)
         self.settings['RANGES'] -- dictionary with ranges for each variable to check
         df                      -- pandas.dataframe with data for a single station [rows:times, columns:variables]
         """

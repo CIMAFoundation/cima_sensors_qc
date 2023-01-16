@@ -27,7 +27,7 @@ TEST_GOOD = (
 def quality_label(qc_val):
     """
     This function assigns the quality label:
-    - incomplete: complete or consistency tests are not passed
+    - incomplete: complete test is not passed
     - wrong:      range test is non passed
     - suspicious: step or time persistence tests are non passed
     - good:       all tests are passed
