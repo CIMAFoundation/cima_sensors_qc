@@ -57,6 +57,6 @@ def quality_check(df_station: pd.DataFrame, settings: Dict=DEFAULT):
     """
     df_check = pd.DataFrame(index=df_station.index, columns=['QC', 'QC_LABEL'])
     internal_check = InternalCheck(settings)
-    df_check.loc[:, 'QC'] = internal_check.all_test(df_station)
-    df_check.loc[:, 'QC_LABEL'] = df_check['QC'].apply(lambda qc_val: quality_label(qc_val))
+    df_check['QC'] = internal_check.all_test(df_station)
+    df_check['QC_LABEL'] = df_check['QC'].apply(lambda qc_val: quality_label(qc_val))
     return df_check
