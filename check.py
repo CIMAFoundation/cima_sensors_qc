@@ -77,5 +77,14 @@ def main():
     df_persistence.loc[:, 'result'] = IC.persistence_test(df_persistence)
     print('             all variables: ', df_persistence.result.equals(df_persistence.check))
 
+    ## COMPLETE TESTS
+    df_all = pd.read_csv('test/test_ALL.csv', index_col=0)
+    df_all['check'] = df_all['check'].astype('uint16')
+    print('   - all tests: ', df_all.check.equals(IC.all_test(df_all)))
+    print('        complete: ', df_all.check_COMPLETE.equals(IC.complete_test(df_all)))
+    print('        range: ', df_all.check_RANGE.equals(IC.range_test(df_all)))
+    print('        step: ', df_all.check_STEP.equals(IC.step_test(df_all)))
+    print('        persistence: ', df_all.check_PERSISTENCE.equals(IC.persistence_test(df_all)))
+
 if __name__=='__main__':
     main()
