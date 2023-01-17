@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="risicolive_QC",
-    version="0.2.0",
+    version="1.0.0",
     author="Nicolò Perello",
     author_email="nicolo.perello@cimafoundation.org",
     description="data quality check algorithm for RISICO Live stations",
