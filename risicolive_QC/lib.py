@@ -12,15 +12,16 @@ class QualityLabel(Enum):
     SUSPICIOUS = 1
     GOOD       = 0
 
-TEST_COMPLETE = (FLAGS.OK_COMPLETE.value | FLAGS.OK_CONSISTENT.value)
+TEST_COMPLETE = (
+    FLAGS.OK_COMPLETE.value | FLAGS.OK_CONSISTENT.value
+)
 TEST_RANGE_OK = FLAGS.OK_RANGE.value
 TEST_NOT_SUSPICIOUS = (
     FLAGS.OK_NO_STEPS.value | FLAGS.OK_NO_PERSISTENCE.value
 )
 TEST_GOOD = (
-    FLAGS.OK_COMPLETE.value | FLAGS.OK_CONSISTENT.value |
-    FLAGS.OK_RANGE.value | FLAGS.OK_NO_STEPS.value |
-    FLAGS.OK_NO_PERSISTENCE.value
+    FLAGS.OK_COMPLETE.value | FLAGS.OK_RANGE.value |
+    FLAGS.OK_NO_STEPS.value | FLAGS.OK_NO_PERSISTENCE.value
 )
 
 
@@ -28,7 +29,7 @@ TEST_GOOD = (
 def quality_label(qc_val):
     """
     This function assigns the quality label:
-    - incomplete: complete or consistency tests are not passed
+    - incomplete: complete test is not passed
     - wrong:      range test is non passed
     - suspicious: step or time persistence tests are non passed
     - good:       all tests are passed
@@ -58,6 +59,6 @@ def quality_check(df_station: pd.DataFrame, settings: Dict=DEFAULT):
     """
     df_check = pd.DataFrame(index=df_station.index, columns=['QC', 'QC_LABEL'])
     internal_check = InternalCheck(settings)
-    df_check.loc[:, 'QC'] = internal_check.all_test(df_station)
-    df_check.loc[:, 'QC_LABEL'] = df_check['QC'].apply(lambda qc_val: quality_label(qc_val))
+    df_check['QC'] = internal_check.all_test(df_station)
+    df_check['QC_LABEL'] = df_check['QC'].apply(lambda qc_val: quality_label(qc_val))
     return df_check
