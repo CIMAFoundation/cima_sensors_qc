@@ -22,4 +22,5 @@ In order to use these data for the implementation of RISICO model, the following
 - relative humidity [.]
 - wind speed [m/s]
 - precipitation [mm]
+
 The time step of data acqusition for the RISICO LIVE network is **10 minutes**. The sliding window considered for the time persistence test is *2 hours*.
