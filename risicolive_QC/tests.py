@@ -1,3 +1,21 @@
+################################################################################
+# Copyright 2023, Nicolò Perello, Mirko D'Andrea
+################################################################################
+#This file is part of risicolive_QC.
+#
+#risicolive_QC is free software: you can redistribute it and/or modify it under
+#the terms of the GNU General Public License as published by the
+#Free Software Foundation, either version 3 of the License,
+#or (at your option) any later version.
+#
+#risicolive_QC is distributed in the hope that it will be useful, but WITHOUT
+#ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+#FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License along with
+#risicolive_QC. If not, see <https://www.gnu.org/licenses/>.
+################################################################################
+
 import pandas as pd
 import numpy as np
 from typing import List, Any, Union, Dict, Tuple
@@ -105,6 +123,7 @@ class InternalCheck():
         persistence = np.all((var_check>=min_val)&(var_check<=max_val)) and (np.abs(np.max(var_check)-np.min(var_check))<min_variation)
         return not persistence
 
+    ####### DEPRECATED #########################################################
     #def consistency_test(self, df: pd.DataFrame) -> pd.Series:
     #    """
     #    The function checks data consistency for two variables A and B in each time instant:
