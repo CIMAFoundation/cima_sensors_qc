@@ -1,4 +1,4 @@
-# **QUALITY CHECK OF DATA FROM WEATHER STATIONS**
+# **cima_sensors_qc**
 Algorithm for quality check of weather station data.
 
 The algorithm works with pandas.DataFrame objects, in which each **row** corresponds to a different **time** while data from different **variables** are placed in **columns**.

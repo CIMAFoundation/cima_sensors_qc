@@ -1,19 +1,19 @@
 ################################################################################
 # Copyright 2023, Nicolò Perello, Mirko D'Andrea
 ################################################################################
-#This file is part of risicolive_QC.
+#This file is part of cima_sensors_qc.
 #
-#risicolive_QC is free software: you can redistribute it and/or modify it under
+#cima_sensors_qc is free software: you can redistribute it and/or modify it under
 #the terms of the GNU General Public License as published by the
 #Free Software Foundation, either version 3 of the License,
 #or (at your option) any later version.
 #
-#risicolive_QC is distributed in the hope that it will be useful, but WITHOUT
+#cima_sensors_qc is distributed in the hope that it will be useful, but WITHOUT
 #ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 #FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License along with
-#risicolive_QC. If not, see <https://www.gnu.org/licenses/>.
+#cima_sensors_qc. If not, see <https://www.gnu.org/licenses/>.
 ################################################################################
 
 import pandas as pd
