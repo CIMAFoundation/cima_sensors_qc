@@ -1,3 +1,21 @@
+################################################################################
+# Copyright 2023, Nicolò Perello, Mirko D'Andrea
+################################################################################
+#This file is part of risicolive_QC.
+#
+#risicolive_QC is free software: you can redistribute it and/or modify it under
+#the terms of the GNU General Public License as published by the
+#Free Software Foundation, either version 3 of the License,
+#or (at your option) any later version.
+#
+#risicolive_QC is distributed in the hope that it will be useful, but WITHOUT
+#ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+#FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License along with
+#risicolive_QC. If not, see <https://www.gnu.org/licenses/>.
+################################################################################
+
 import pandas as pd
 import numpy as np
 from risicolive_QC import InternalCheck, quality_check
@@ -29,13 +47,13 @@ def main():
     print('   - single tests')
     # COMPLETE CHECK
     print('       - complete test...', end='')
-    df_complete = pd.read_csv('test/test_complete.csv', index_col=0)
+    df_complete = pd.read_csv('test_complete.csv', index_col=0)
     df_complete.loc[:, 'result'] = IC.complete_test(df_complete)
     print(df_complete.result.equals(df_complete.check))
 
     # RANGE CHECK
     print('       - range test...')
-    df_range = pd.read_csv('test/test_range.csv', index_col=0)
+    df_range = pd.read_csv('test_range.csv', index_col=0)
     ## check single variables
     print('             single variables: ')
     for var in settings['RANGES'].keys():
@@ -49,7 +67,7 @@ def main():
 
     # STEP CHECK
     print('       - step test...')
-    df_step = pd.read_csv('test/test_step.csv', index_col=0)
+    df_step = pd.read_csv('test_step.csv', index_col=0)
     ## check single variables
     print('             single variables: ')
     for var in settings['STEPS'].keys():
@@ -62,7 +80,7 @@ def main():
 
     # PERSISTENCE CHECK
     print('       - persistence test...')
-    df_persistence = pd.read_csv('test/test_persistence.csv', index_col=0)
+    df_persistence = pd.read_csv('test_persistence.csv', index_col=0)
     ## check single variables
     print('             single variables: ')
     for var in settings['VARIATIONS'].keys():
@@ -78,7 +96,7 @@ def main():
     print('             all variables: ', df_persistence.result.equals(df_persistence.check))
 
     ## COMPLETE TESTS
-    df_all = pd.read_csv('test/test_ALL.csv', index_col=0)
+    df_all = pd.read_csv('test_ALL.csv', index_col=0)
     df_all['check'] = df_all['check'].astype('uint16')
     df_all_checked = quality_check(df_all, settings)
     print('   - all tests: ', df_all.check.equals(df_all_checked.QC))
