@@ -1,7 +1,7 @@
 # **QUALITY CHECK OF DATA FROM WEATHER STATIONS**
 Algorithm for quality check of weather station data.
 
-The algorithm works with pandas.DataFrame objects, in which each **row** corresponds to a different **time** (set as index) while data from different **variables** are placed in **columns**.
+The algorithm works with pandas.DataFrame objects, in which each **row** corresponds to a different **time** while data from different **variables** are placed in **columns**.
 
 The quality check algorithm is composed by a list of consecutive tests. These tests are computed for each row. All rows are flagged according to test passed, and classified in four classes accordingly.
 The quality tests considered are the following:
@@ -11,9 +11,10 @@ The quality tests considered are the following:
 4. **time persistence test**: this test checks if data can be considered time fixed. This test work on a sliding window. If the test fails, the row is flagged and classified as *suspicious*.
 5. if all tests are passed, the row is flagged and classified as *good*.
 
-See the image below for the algorithm scheme and *example_notebook.ipynb* for examples.
-
+See the image below for the algorithm scheme.
 ![Algorithm scheme](scheme.png)
+
+The user can set the configuration for each tests, and accordingly select which test must be computed - if a test is not request, it is considered as passed. See **example.ipynb** notebook for examples.
 
 
 ### Default configuration: RISICO LIVE network
