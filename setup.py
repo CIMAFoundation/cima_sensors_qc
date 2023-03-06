@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="risicolive_QC",
-    version="1.1.0",
+    version="1.1.1",
     author="Nicolò Perello, Mirko D'Andrea",
     author_email="nicolo.perello@cimafoundation.org",
     description="data quality check algorithm for weather stations",
