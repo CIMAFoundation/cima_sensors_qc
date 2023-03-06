@@ -14,7 +14,7 @@ The quality tests considered are the following:
 See the image below for the algorithm scheme.
 ![Algorithm scheme](scheme.png)
 
-The user can set the configuration for each tests, and accordingly select which test must be computed - if a test is not request, it is considered as passed. See **example.ipynb** notebook for examples.
+The user can set the configuration for each tests, and accordingly select which test must be computed - if a test is not request, it is considered as passed. See **example.ipynb** notebook for examples of how to set properly a test. **NOTE**: at the current state of development (version 1.1.1) there is no check if tests are sett properly.
 
 
 ### Default configuration: RISICO LIVE network

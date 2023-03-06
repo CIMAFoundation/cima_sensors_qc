@@ -105,27 +105,15 @@ class InternalCheck():
 
     def __post_init__(self):
         """Complete the settings"""
-        which_tests = dict()
-        # check complete test
-        if 'VARS_CHECK' in self.settings.keys():
-            which_tests['complete_test'] = 1
-        else:
-            which_tests['complete_test'] = 0
-        # check range test
-        if 'RANGES' in self.settings.keys():
-            which_tests['range_test'] = 1
-        else:
-            which_tests['range_test'] = 0
-        # check step test
+        which_tests = {'complete':False, 'range':False, 'step':False, 'persistence':False}
+        if 'VARS_CHECK' in self.settings.keys(): # check complete_test
+            which_tests['complete'] = True
+        if 'RANGES' in self.settings.keys(): # check range_test
+            which_tests['range'] = True
         if 'STEPS' in self.settings.keys():
-            which_tests['step_test'] = 1
-        else:
-            which_tests['step_test'] = 0
-        # check persistence test
-        if ('WINDOW' in self.settings.keys()) and ('VARIATIONS' in self.settings.keys()):
-            which_tests['persistence_test'] = 1
-        else:
-            which_tests['persistence_test'] = 0
+            which_tests['step'] = True # check step_test
+        if ('WINDOW' in self.settings.keys()) and ('VARIATIONS' in self.settings.keys()): #check persistence_test
+            which_tests['persistence'] = True
         self.which_tests = which_tests
 
 
@@ -134,27 +122,31 @@ class InternalCheck():
         df_check = pd.Series(index=df_station.index, name='internal_check', dtype='uint16')
         df_check.loc[:] = FLAGS.ALL_NO.value
 
-        if self.which_tests['complete_test']==1:
-            df_check.loc[self.complete_test(df_station)]+= FLAGS.OK_COMPLETE.value
+        if self.which_tests['complete']:
+            index_complete = self.complete_test(df_station)
         else:
-            df_check.loc[:]+= FLAGS.OK_COMPLETE.value
+            index_complete = df_check.index
+        df_check.loc[index_complete] += FLAGS.OK_COMPLETE.value
 
-        df_check.loc[:]+= FLAGS.OK_CONSISTENT.value ## ALL ARE CONSISTENT - consistency_test DEPRECATED
+        df_check.loc[:] += FLAGS.OK_CONSISTENT.value ## ALL ARE CONSISTENT - consistency_test DEPRECATED
 
-        if self.which_tests['range_test']==1:
-            df_check.loc[self.range_test(df_station)]+= FLAGS.OK_RANGE.value
+        if self.which_tests['range']:
+            index_range = self.range_test(df_station)
         else:
-            df_check.loc[:]+= FLAGS.OK_RANGE.value
+            index_range = df_check.index
+        df_check.loc[index_range] += FLAGS.OK_RANGE.value
 
-        if self.which_tests['step_test']==1:
-            df_check.loc[self.step_test(df_station)]+= FLAGS.OK_NO_STEPS.value
+        if self.which_tests['step']:
+            index_step = self.step_test(df_station)
         else:
-            df_check.loc[:]+= FLAGS.OK_NO_STEPS.value
+            index_step = df_check.index
+        df_check.loc[index_step] += FLAGS.OK_NO_STEPS.value
 
-        if self.which_tests['persistence_test']==1:
-            df_check.loc[self.persistence_test(df_station)] += FLAGS.OK_NO_PERSISTENCE.value
+        if self.which_tests['persistence']:
+            index_persistence = self.persistence_test(df_station)
         else:
-            df_check.loc[:] += FLAGS.OK_NO_PERSISTENCE.value
+            index_persistence = df_check.index
+        df_check.loc[index_persistence] += FLAGS.OK_NO_PERSISTENCE.value
 
         df_check = df_check.astype('uint16')
         return df_check
