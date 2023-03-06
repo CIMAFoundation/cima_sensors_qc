@@ -29,7 +29,7 @@ class FLAGS(Enum):
     """
     ALL_NO            = np.uint16(0b0000000000000000) # none of the tests are passed
     OK_COMPLETE       = np.uint16(0b0000000000000001) # complete test is passed
-    OK_CONSISTENT     = np.uint16(0b0000000000000010) # consistent test is passed
+    OK_CONSISTENT     = np.uint16(0b0000000000000010) # consistency test is passed
     OK_RANGE          = np.uint16(0b0000000000000100) # range test is passed
     OK_NO_STEPS       = np.uint16(0b0000000000001000) # step test is passed
     OK_NO_PERSISTENCE = np.uint16(0b0000000000010000) # persistence test is passed
@@ -57,6 +57,8 @@ TEST_GOOD = (
 )
 
 
+################################################################################
+### FUNCTIONS ##################################################################
 ################################################################################
 def quality_check(df_station: pd.DataFrame, settings: Dict=DEFAULT):
     """
@@ -103,20 +105,57 @@ class InternalCheck():
 
     def __post_init__(self):
         """Complete the settings"""
-        for kk in DEFAULT.keys():
-            if not (kk in self.settings.keys()):
-                self.settings[kk] = DEFAULT[kk]
+        which_tests = dict()
+        # check complete test
+        if 'VARS_CHECK' in self.settings.keys():
+            which_tests['complete_test'] = 1
+        else:
+            which_tests['complete_test'] = 0
+        # check range test
+        if 'RANGES' in self.settings.keys():
+            which_tests['range_test'] = 1
+        else:
+            which_tests['range_test'] = 0
+        # check step test
+        if 'STEPS' in self.settings.keys():
+            which_tests['step_test'] = 1
+        else:
+            which_tests['step_test'] = 0
+        # check persistence test
+        if ('WINDOW' in self.settings.keys()) and ('VARIATIONS' in self.settings.keys()):
+            which_tests['persistence_test'] = 1
+        else:
+            which_tests['persistence_test'] = 0
+        self.which_tests = which_tests
 
 
     def all_test(self, df_station: pd.DataFrame) -> pd.DataFrame:
         """This function compute all the tests consecutively"""
         df_check = pd.Series(index=df_station.index, name='internal_check', dtype='uint16')
         df_check.loc[:] = FLAGS.ALL_NO.value
-        df_check.loc[self.complete_test(df_station)]    += FLAGS.OK_COMPLETE.value
-        df_check.loc[:]                                 += FLAGS.OK_CONSISTENT.value ## ALL ARE CONSISTENT
-        df_check.loc[self.range_test(df_station)]       += FLAGS.OK_RANGE.value
-        df_check.loc[self.step_test(df_station)]        += FLAGS.OK_NO_STEPS.value
-        df_check.loc[self.persistence_test(df_station)] += FLAGS.OK_NO_PERSISTENCE.value
+
+        if self.which_tests['complete_test']==1:
+            df_check.loc[self.complete_test(df_station)]+= FLAGS.OK_COMPLETE.value
+        else:
+            df_check.loc[:]+= FLAGS.OK_COMPLETE.value
+
+        df_check.loc[:]+= FLAGS.OK_CONSISTENT.value ## ALL ARE CONSISTENT - consistency_test DEPRECATED
+
+        if self.which_tests['range_test']==1:
+            df_check.loc[self.range_test(df_station)]+= FLAGS.OK_RANGE.value
+        else:
+            df_check.loc[:]+= FLAGS.OK_RANGE.value
+
+        if self.which_tests['step_test']==1:
+            df_check.loc[self.step_test(df_station)]+= FLAGS.OK_NO_STEPS.value
+        else:
+            df_check.loc[:]+= FLAGS.OK_NO_STEPS.value
+
+        if self.which_tests['persistence_test']==1:
+            df_check.loc[self.persistence_test(df_station)] += FLAGS.OK_NO_PERSISTENCE.value
+        else:
+            df_check.loc[:] += FLAGS.OK_NO_PERSISTENCE.value
+
         df_check = df_check.astype('uint16')
         return df_check
 
