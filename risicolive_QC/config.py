@@ -16,16 +16,6 @@
 #risicolive_QC. If not, see <https://www.gnu.org/licenses/>.
 ################################################################################
 
-INFO = {
-        "DT": "10min",
-        "VARS": {
-            "t":  { "info":"temperature",    "um": "C"},
-            "h":  { "info":"humidity",       "um": "."},
-            "p":  { "info":"precipitation",  "um": "mm/dt"},
-            "ws": {	"info":"wind speed",     "um": "m/s"},
-        }
-    }
-
 DEFAULT = {
         "VARS_CHECK": ["t", "h", "p", "ws"],
         "RANGES": {
