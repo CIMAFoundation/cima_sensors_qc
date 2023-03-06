@@ -1,0 +1,50 @@
+name: /home/user/Documents/projects/risicolive_QC/.env
+channels:
+  - ak_93
+  - anaconda
+  - f0xy
+  - nymerion
+  - free
+  - avalon
+  - travis
+  - conda-forge
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=2_gnu
+  - bzip2=1.0.8=h7b6447c_0
+  - ca-certificates=2022.9.24=ha878542_0
+  - dataclasses=0.8=pyh6d0b6a4_7
+  - ld_impl_linux-64=2.38=h1181459_1
+  - libblas=3.9.0=16_linux64_openblas
+  - libcblas=3.9.0=16_linux64_openblas
+  - libffi=3.4.2=h295c915_4
+  - libgcc-ng=12.1.0=h8d9b700_16
+  - libgfortran-ng=12.1.0=h69a702a_16
+  - libgfortran5=12.1.0=hdcd56e2_16
+  - libgomp=12.1.0=h8d9b700_16
+  - liblapack=3.9.0=16_linux64_openblas
+  - libnsl=2.0.0=h7f98852_0
+  - libopenblas=0.3.21=pthreads_h78a6416_3
+  - libsqlite=3.39.3=h753d276_0
+  - libstdcxx-ng=12.1.0=ha89aaad_16
+  - libuuid=2.32.1=h7f98852_1000
+  - libzlib=1.2.12=h166bdaf_2
+  - ncurses=6.3=h5eee18b_3
+  - numpy=1.23.3=py310h53a5b5f_0
+  - openssl=3.0.5=h166bdaf_2
+  - pandas=1.5.0=py310h769672d_0
+  - pip=22.2.2=pyhd8ed1ab_0
+  - python=3.10.6=ha86cf86_0_cpython
+  - python-dateutil=2.8.2=pyhd3eb1b0_0
+  - python_abi=3.10=2_cp310
+  - pytz=2022.2.1=pyhd8ed1ab_0
+  - readline=8.1.2=h7f8727e_1
+  - setuptools=65.3.0=pyhd8ed1ab_1
+  - six=1.16.0=pyhd3eb1b0_1
+  - tk=8.6.12=h1ccaba5_0
+  - tzdata=2022c=h191b570_0
+  - wheel=0.37.1=pyhd3eb1b0_0
+  - xz=5.2.6=h166bdaf_0
+  - zlib=1.2.12=h7f8727e_2
+prefix: /home/user/Documents/projects/risicolive_QC/.env
