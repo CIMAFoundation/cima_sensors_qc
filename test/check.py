@@ -1,24 +1,27 @@
 ################################################################################
 # Copyright 2023, Nicolò Perello, Mirko D'Andrea
 ################################################################################
-#This file is part of risicolive_QC.
+#This file is part of cima_sensors_qc.
 #
-#risicolive_QC is free software: you can redistribute it and/or modify it under
+#cima_sensors_qc is free software: you can redistribute it and/or modify it under
 #the terms of the GNU General Public License as published by the
 #Free Software Foundation, either version 3 of the License,
 #or (at your option) any later version.
 #
-#risicolive_QC is distributed in the hope that it will be useful, but WITHOUT
+#cima_sensors_qc is distributed in the hope that it will be useful, but WITHOUT
 #ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 #FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
 #You should have received a copy of the GNU General Public License along with
-#risicolive_QC. If not, see <https://www.gnu.org/licenses/>.
+#cima_sensors_qc. If not, see <https://www.gnu.org/licenses/>.
 ################################################################################
 
 import pandas as pd
 import numpy as np
-from risicolive_QC import InternalCheck, quality_check
+import sys 
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from cima_sensors_qc import InternalCheck, quality_check
 
 ###
 settings = {
@@ -105,6 +108,7 @@ def main():
     print('           step: ', df_all.check_STEP.equals(IC.step_test(df_all)))
     print('           persistence: ', df_all.check_PERSISTENCE.equals(IC.persistence_test(df_all)))
     print('     labels: ', df_all.check_LABEL.equals(df_all_checked.QC_LABEL))
+
 
 if __name__=='__main__':
     main()
